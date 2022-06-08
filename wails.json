@@ -1,7 +1,7 @@
 {
     "name": "player-go",
     "info": {
-        "productVersion": "[The version of the product. Default: '1.0.0']",
+        "productVersion": "0.0.1",
         "copyright": "xmdhs",
         "comments": "player for danmu"
     },
