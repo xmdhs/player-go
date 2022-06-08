@@ -19,9 +19,17 @@ jobs:
       with:
         go-version: 1.18
 
+    - name: Build dependencies
+      run: |
+        git clone https://github.com/xmdhs/player
+        cd player
+        npm run build
+        cp -r dist/ ../frontend/
+
     - name: Build
       run: |
         go install github.com/wailsapp/wails/v2/cmd/wails@latest
+        
         wails build -trimpath -ldflags="-w -s" -o bin/player-linux -upx	
         wails build -trimpath -ldflags="-w -s" -o bin/player-windows.exe -platform windows/amd64 -upx	
 
