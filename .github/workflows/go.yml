@@ -25,6 +25,7 @@ jobs:
         cd player
         npm install
         npm run build
+        mkdir ../frontend
         cp -r dist/ ../frontend/
 
     - name: Build
