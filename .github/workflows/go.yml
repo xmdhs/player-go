@@ -35,8 +35,8 @@ jobs:
       run: |
         go install github.com/wailsapp/wails/v2/cmd/wails@latest
         
-        wails build -trimpath -ldflags="-w -s" -o bin/player-linux -upx	
-        wails build -trimpath -ldflags="-w -s" -o bin/player-windows.exe -platform windows/amd64 -upx	
+        wails build -trimpath -ldflags="-w -s" -o player-linux -upx	
+        wails build -trimpath -ldflags="-w -s" -o player-windows.exe -platform windows/amd64 -upx	
 
     - name: Test
       run: go test -race -v ./...
@@ -45,5 +45,5 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
           # A file, directory or wildcard pattern that describes what to upload
-          path: bin/player-*
+          path: build/bin/player-*
           name: ${{ github.run_number }}
