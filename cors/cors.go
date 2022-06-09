@@ -71,9 +71,9 @@ func corsProxy(u *url.URL) http.HandlerFunc {
 		}
 
 		proxy.ModifyResponse = func(r *http.Response) error {
-			r.Header.Set("Access-Control-Allow-Origin", "*")
-			r.Header.Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
-			r.Header.Set("Access-Control-Allow-Headers", "Accept, Authorization, Cache-Control, Content-Type, DNT, If-Modified-Since, Keep-Alive, Origin, User-Agent")
+			r.Header.Set("Access-Control-Allow-Origin", r.Header.Get("origin"))
+			r.Header.Set("Access-Control-Allow-Methods", r.Header.Get("Access-Control-Request-Method"))
+			r.Header.Set("Access-Control-Allow-Headers", r.Header.Get("Access-Control-Request-Headers"))
 			r.Header.Set("X-ToProxy", r.Request.URL.String())
 			if r.StatusCode >= 300 && r.StatusCode < 400 && r.Header.Get("Location") != "" {
 				r.Header.Set("Location", "/"+r.Header.Get("Location"))
