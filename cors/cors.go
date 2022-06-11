@@ -12,11 +12,11 @@ import (
 	"time"
 )
 
-func Server(cxt context.Context) int {
+func Server(cxt context.Context, t *http.Transport) int {
 	p := GetProt()
 	s := http.Server{
 		Addr:              "127.0.0.1:" + strconv.FormatInt(p, 10),
-		Handler:           handler(),
+		Handler:           handler(t),
 		ReadTimeout:       10 * time.Second,
 		WriteTimeout:      60 * time.Second,
 		ReadHeaderTimeout: 5 * time.Second,
@@ -30,7 +30,7 @@ func Server(cxt context.Context) int {
 	return int(p)
 }
 
-func handler() http.HandlerFunc {
+func handler(t *http.Transport) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		u := r.URL.String()
 		u = strings.TrimPrefix(u, "/")
@@ -47,17 +47,18 @@ func handler() http.HandlerFunc {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		corsProxy(purl).ServeHTTP(w, r)
+		corsProxy(purl, t).ServeHTTP(w, r)
 	}
 }
 
-func corsProxy(u *url.URL) http.HandlerFunc {
+func corsProxy(u *url.URL, t *http.Transport) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		proxy := httputil.NewSingleHostReverseProxy(&url.URL{
 			Host:   u.Host,
 			Scheme: u.Scheme,
 		})
 		proxy.ErrorLog = log.Default()
+		proxy.Transport = t
 
 		df := proxy.Director
 

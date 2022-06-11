@@ -13,6 +13,8 @@ import (
 
 	"github.com/pkg/browser"
 	"github.com/xmdhs/player-go/cors"
+
+	"github.com/mattn/go-ieproxy"
 )
 
 //go:embed frontend/dist
@@ -20,7 +22,13 @@ var assets embed.FS
 
 func main() {
 	cxt := context.Background()
-	cport := cors.Server(cxt)
+
+	t := http.DefaultTransport.(*http.Transport).Clone()
+	t.Proxy = ieproxy.GetProxyFunc()
+
+	cport := cors.Server(cxt, t)
+
+	ieproxy.OverrideEnvWithStaticProxy()
 
 	mux := http.NewServeMux()
 
