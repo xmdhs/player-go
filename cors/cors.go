@@ -13,7 +13,7 @@ import (
 )
 
 func Server(cxt context.Context) int {
-	p := getProt()
+	p := GetProt()
 	s := http.Server{
 		Addr:              "127.0.0.1:" + strconv.FormatInt(p, 10),
 		Handler:           handler(),
@@ -71,7 +71,7 @@ func corsProxy(u *url.URL) http.HandlerFunc {
 		}
 
 		proxy.ModifyResponse = func(r *http.Response) error {
-			r.Header.Set("Access-Control-Allow-Origin", r.Header.Get("origin"))
+			r.Header.Set("Access-Control-Allow-Origin", "*")
 			r.Header.Set("Access-Control-Allow-Methods", r.Header.Get("Access-Control-Request-Method"))
 			r.Header.Set("Access-Control-Allow-Headers", r.Header.Get("Access-Control-Request-Headers"))
 			r.Header.Set("X-ToProxy", r.Request.URL.String())
@@ -89,7 +89,7 @@ func corsProxy(u *url.URL) http.HandlerFunc {
 	}
 }
 
-func getProt() int64 {
+func GetProt() int64 {
 	l, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
 		panic(err)
