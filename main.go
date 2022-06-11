@@ -5,10 +5,13 @@ import (
 	"embed"
 	"log"
 	"net/http"
+	"os"
+	"path"
 
 	"github.com/mattn/go-ieproxy"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
+	"github.com/wailsapp/wails/v2/pkg/options/windows"
 	"github.com/xmdhs/player-go/cors"
 )
 
@@ -22,7 +25,11 @@ func main() {
 	app := &App{
 		t: t,
 	}
-	err := wails.Run(&options.App{
+	pwd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	err = wails.Run(&options.App{
 		Title:      "player",
 		Width:      800,
 		Height:     600,
@@ -31,6 +38,9 @@ func main() {
 		OnShutdown: app.shutdown,
 		Bind: []interface{}{
 			app,
+		},
+		Windows: &windows.Options{
+			WebviewUserDataPath: path.Join(pwd, "data"),
 		},
 	})
 	if err != nil {
