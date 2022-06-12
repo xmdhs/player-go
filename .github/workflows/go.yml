@@ -34,8 +34,8 @@ jobs:
     - name: Build
       run: |
         go install github.com/wailsapp/wails/v2/cmd/wails@latest
-        wails build -trimpath -ldflags="-w -s" -o player-linux -upx	-debug
-        wails build -trimpath -ldflags="-w -s" -o player-windows.exe -platform windows/amd64 -upx	-debug
+        wails build -trimpath -ldflags="-w -s" -o player-linux -upx	
+        wails build -trimpath -ldflags="-w -s" -o player-windows.exe -platform windows/amd64 -upx	
 
     - name: Test
       run: go test -race -v ./...
