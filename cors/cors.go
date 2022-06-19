@@ -3,17 +3,18 @@ package cors
 import (
 	"context"
 	"log"
-	"net"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/xmdhs/player-go/utils"
 )
 
 func Server(cxt context.Context, t *http.Transport) int {
-	p := GetProt()
+	p := utils.GetProt()
 	s := http.Server{
 		Addr:              "127.0.0.1:" + strconv.FormatInt(p, 10),
 		Handler:           handler(t),
@@ -88,18 +89,4 @@ func corsProxy(u *url.URL, t *http.Transport) http.HandlerFunc {
 
 		proxy.ServeHTTP(w, r)
 	}
-}
-
-func GetProt() int64 {
-	l, err := net.Listen("tcp", "127.0.0.1:0")
-	if err != nil {
-		panic(err)
-	}
-	defer l.Close()
-	list := strings.Split(l.Addr().String(), ":")
-	i, err := strconv.ParseInt(list[1], 10, 64)
-	if err != nil {
-		panic(err)
-	}
-	return i
 }

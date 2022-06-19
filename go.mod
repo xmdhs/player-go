@@ -3,8 +3,11 @@ module github.com/xmdhs/player-go
 go 1.18
 
 require (
+	github.com/julienschmidt/httprouter v1.3.0
 	github.com/mattn/go-ieproxy v0.0.7
+	github.com/pkg/browser v0.0.0-20210706143420-7d21f8c997e2
 	github.com/wailsapp/wails/v2 v2.0.0-beta.37
+	go.etcd.io/bbolt v1.3.6
 )
 
 require (
@@ -20,7 +23,6 @@ require (
 	github.com/leaanthony/slicer v1.5.0 // indirect
 	github.com/mattn/go-colorable v0.1.11 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
-	github.com/pkg/browser v0.0.0-20210706143420-7d21f8c997e2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/tkrajina/go-reflector v0.5.5 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect

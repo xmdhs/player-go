@@ -1,3 +1,5 @@
+//go:build !browser
+
 package main
 
 import (
@@ -12,7 +14,9 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
+	"github.com/xmdhs/player-go/api"
 	"github.com/xmdhs/player-go/cors"
+	"go.etcd.io/bbolt"
 )
 
 //go:embed frontend/dist
@@ -22,13 +26,19 @@ func main() {
 	t := http.DefaultTransport.(*http.Transport).Clone()
 	t.Proxy = ieproxy.GetProxyFunc()
 
+	db, err := bbolt.Open("player.db", 0600, nil)
+	if err != nil {
+		panic(err)
+	}
 	app := &App{
-		t: t,
+		t:  t,
+		db: db,
 	}
 	pwd, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
+
 	err = wails.Run(&options.App{
 		Title:      "player",
 		Width:      800,
@@ -51,6 +61,7 @@ func main() {
 type App struct {
 	ctx context.Context
 	t   *http.Transport
+	db  *bbolt.DB
 }
 
 func (b *App) startup(ctx context.Context) {
@@ -61,4 +72,8 @@ func (b *App) shutdown(ctx context.Context) {}
 
 func (b *App) CorsServer() int {
 	return cors.Server(b.ctx, b.t)
+}
+
+func (b *App) ApiServer() int {
+	return api.Server(b.ctx, b.db)
 }
