@@ -27,7 +27,7 @@ func Server(cxt context.Context, db *bbolt.DB) int {
 	})
 
 	mux.POST("/store/:key", store(db))
-	mux.GET("/read/:key", read(db))
+	mux.GET("/store/:key", read(db))
 
 	s := http.Server{
 		Addr:              "127.0.0.1:" + strconv.FormatInt(p, 10),

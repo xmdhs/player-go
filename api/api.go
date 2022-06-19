@@ -10,6 +10,7 @@ import (
 
 func store(db *bbolt.DB) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		key := p.ByName("key")
 		b, err := io.ReadAll(r.Body)
 		if err != nil {
@@ -32,6 +33,7 @@ func store(db *bbolt.DB) httprouter.Handle {
 
 func read(db *bbolt.DB) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		key := p.ByName("key")
 		err := db.View(func(tx *bbolt.Tx) error {
 			bkt := tx.Bucket([]byte("data"))
