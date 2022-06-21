@@ -16,17 +16,17 @@ func bilivideoGet(t *http.Transport) httprouter.Handle {
 		Transport: t,
 		Timeout:   10 * time.Second,
 	}
-	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
 		qn := r.FormValue("qn")
 		if qn == "" {
 			qn = "120"
 		}
-		bvid := p.ByName("bvid")
-		cid := p.ByName("cid")
+		bvid := r.FormValue("bvid")
+		cid := r.FormValue("cid")
 
-		if bvid == "" && cid == "" {
+		if bvid == "" || cid == "" {
 			http.Error(w, "bvid or cid is required", http.StatusBadRequest)
 			return
 		}
