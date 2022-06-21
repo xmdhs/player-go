@@ -75,5 +75,5 @@ func (b *App) CorsServer() int {
 }
 
 func (b *App) ApiServer() int {
-	return api.Server(b.ctx, b.db)
+	return api.Server(b.ctx, b.db, b.t)
 }

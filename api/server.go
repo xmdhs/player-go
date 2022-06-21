@@ -11,7 +11,7 @@ import (
 	"go.etcd.io/bbolt"
 )
 
-func Server(cxt context.Context, db *bbolt.DB) int {
+func Server(cxt context.Context, db *bbolt.DB, t *http.Transport) int {
 	p := utils.GetProt()
 
 	mux := httprouter.New()
@@ -28,6 +28,7 @@ func Server(cxt context.Context, db *bbolt.DB) int {
 
 	mux.POST("/store/:key", store(db))
 	mux.GET("/store/:key", read(db))
+	mux.GET("/bilibili.flv", bilivideoGet(t))
 
 	s := http.Server{
 		Addr:              "127.0.0.1:" + strconv.FormatInt(p, 10),
