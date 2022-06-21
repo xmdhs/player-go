@@ -36,7 +36,7 @@ func main() {
 	}
 
 	cport := cors.Server(cxt, t)
-	apiPort := api.Server(cxt, db)
+	apiPort := api.Server(cxt, db, t)
 
 	ieproxy.OverrideEnvWithStaticProxy()
 
