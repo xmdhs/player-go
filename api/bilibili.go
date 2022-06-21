@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -17,8 +18,6 @@ func bilivideoGet(t *http.Transport) httprouter.Handle {
 		Timeout:   10 * time.Second,
 	}
 	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-
 		qn := r.FormValue("qn")
 		if qn == "" {
 			qn = "120"
@@ -44,7 +43,7 @@ func bilivideoGet(t *http.Transport) httprouter.Handle {
 		uq.Set("cid", cid)
 		uq.Set("fnval", fnval)
 		uq.Set("qn", qn)
-		reqs, err := http.NewRequest("GET", "https://api.bilibili.com/x/player/playurl"+uq.Encode(), nil)
+		reqs, err := http.NewRequest("GET", "https://api.bilibili.com/x/player/playurl?"+uq.Encode(), nil)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -58,8 +57,13 @@ func bilivideoGet(t *http.Transport) httprouter.Handle {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		b, err := io.ReadAll(resp.Body)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 		bvideo := bili[biliVideoInfo]{}
-		err = json.NewDecoder(resp.Body).Decode(&bvideo)
+		err = json.Unmarshal(b, &bvideo)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -153,8 +157,8 @@ func corsProxy(u *url.URL, t *http.Transport) http.HandlerFunc {
 
 		proxy.ModifyResponse = func(r *http.Response) error {
 			r.Header.Set("Access-Control-Allow-Origin", "*")
-			r.Header.Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
-			r.Header.Set("Access-Control-Allow-Headers", "Accept, Authorization, Cache-Control, Content-Type, DNT, If-Modified-Since, Keep-Alive, Origin, User-Agent")
+			r.Header.Set("Access-Control-Allow-Methods", r.Header.Get("Access-Control-Request-Method"))
+			r.Header.Set("Access-Control-Allow-Headers", r.Header.Get("Access-Control-Request-Headers"))
 			r.Header.Set("X-ToProxy", r.Request.URL.String())
 			if r.StatusCode >= 300 && r.StatusCode < 400 && r.Header.Get("Location") != "" {
 				r.Header.Set("Location", "/"+r.Header.Get("Location"))
