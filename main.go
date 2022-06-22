@@ -40,10 +40,10 @@ func main() {
 	}
 
 	err = wails.Run(&options.App{
-		Title:  "player",
-		Width:  800,
-		Height: 600,
-		Assets: &assets,
+		Title:      "player",
+		Width:      800,
+		Height:     600,
+		Assets:     &assets,
 		OnStartup:  app.startup,
 		OnShutdown: app.shutdown,
 		Bind: []interface{}{
