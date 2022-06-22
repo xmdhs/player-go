@@ -3,9 +3,7 @@ package api
 import (
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
-	"net/http/httputil"
 	"net/url"
 	"time"
 
@@ -76,9 +74,7 @@ func bilivideoGet(t *http.Transport) httprouter.Handle {
 			http.Error(w, "无法处理分段视频", http.StatusInternalServerError)
 			return
 		}
-		// flv
-		w.Header().Set("Content-Type", "video/x-flv")
-		proxyHandler(bvideo.Data.Durl[0].URL, t).ServeHTTP(w, r)
+		w.Write([]byte(bvideo.Data.Durl[0].URL))
 	}
 }
 
@@ -113,63 +109,4 @@ type biliVideoDurl struct {
 	Size      int      `json:"size"`
 	URL       string   `json:"url"`
 	Vhead     string   `json:"vhead"`
-}
-
-func proxyHandler(u string, t *http.Transport) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		purl, err := url.Parse(u)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(err.Error()))
-			return
-		}
-		if purl.Scheme == "" {
-			purl.Scheme = "http"
-		}
-		if purl.Host == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-		corsProxy(purl, t).ServeHTTP(w, r)
-	}
-}
-
-func corsProxy(u *url.URL, t *http.Transport) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		proxy := httputil.NewSingleHostReverseProxy(&url.URL{
-			Host:   u.Host,
-			Scheme: u.Scheme,
-		})
-		proxy.ErrorLog = log.Default()
-		proxy.Transport = t
-
-		df := proxy.Director
-
-		proxy.Director = func(r *http.Request) {
-			df(r)
-			r.Header.Del("referer")
-			r.Header.Del("origin")
-			r.Header.Del("X-Forwarded-For")
-			r.Header.Del("X-Real-IP")
-			r.Header.Set("referer", "https://www.bilibili.com")
-			r.Host = u.Host
-		}
-
-		proxy.ModifyResponse = func(r *http.Response) error {
-			r.Header.Set("Access-Control-Allow-Origin", "*")
-			r.Header.Set("Access-Control-Allow-Methods", r.Header.Get("Access-Control-Request-Method"))
-			r.Header.Set("Access-Control-Allow-Headers", r.Header.Get("Access-Control-Request-Headers"))
-			r.Header.Set("X-ToProxy", r.Request.URL.String())
-			if r.StatusCode >= 300 && r.StatusCode < 400 && r.Header.Get("Location") != "" {
-				r.Header.Set("Location", "/"+r.Header.Get("Location"))
-			}
-			return nil
-		}
-
-		r.URL = u
-		r.RemoteAddr = ""
-		r.RequestURI = u.String()
-
-		proxy.ServeHTTP(w, r)
-	}
 }
