@@ -33,8 +33,18 @@ func Server(cxt context.Context, t *http.Transport) int {
 
 func handler(t *http.Transport) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		referer := r.FormValue("_corsreferer")
-
+		q := r.URL.Query()
+		proxyURL := q.Get("_proxyURL")
+		if proxyURL != "" {
+			purl, err := url.Parse(proxyURL)
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte(err.Error()))
+				return
+			}
+			corsProxy(purl, t, q.Get("_referer")).ServeHTTP(w, r)
+			return
+		}
 		u := r.URL.String()
 		u = strings.TrimPrefix(u, "/")
 		purl, err := url.Parse(u)
@@ -50,11 +60,7 @@ func handler(t *http.Transport) http.HandlerFunc {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		q := purl.Query()
-		q.Del("_corsreferer")
-		purl.RawQuery = q.Encode()
-
-		corsProxy(purl, t, referer).ServeHTTP(w, r)
+		corsProxy(purl, t, "").ServeHTTP(w, r)
 	}
 }
 
