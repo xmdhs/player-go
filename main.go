@@ -40,10 +40,17 @@ func main() {
 	}
 
 	err = wails.Run(&options.App{
-		Title:      "player",
-		Width:      800,
-		Height:     600,
-		Assets:     &assets,
+		Title:  "player",
+		Width:  800,
+		Height: 600,
+		Assets: &assets,
+		AssetsHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			b, err := assets.ReadFile("frontend/dist/index.html")
+			if err != nil {
+				http.Error(w, err.Error(), 500)
+			}
+			w.Write(b)
+		}),
 		OnStartup:  app.startup,
 		OnShutdown: app.shutdown,
 		Bind: []interface{}{
