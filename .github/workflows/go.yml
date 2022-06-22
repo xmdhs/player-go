@@ -29,8 +29,8 @@ jobs:
         mkdir ../frontend
         cp -r dist/ ../frontend/
 
-    - name: Get Wails dependencies
-      run: sudo apt update && sudo apt install -y libgtk-3-dev libwebkit2gtk-4.0-dev
+  #  - name: Get Wails dependencies
+  #    run: sudo apt update && sudo apt install -y libgtk-3-dev libwebkit2gtk-4.0-dev
 
     - name: Build
       run: |
