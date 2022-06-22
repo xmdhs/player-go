@@ -50,6 +50,10 @@ func handler(t *http.Transport) http.HandlerFunc {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
+		q := purl.Query()
+		q.Del("_corsreferer")
+		purl.RawQuery = q.Encode()
+
 		corsProxy(purl, t, referer).ServeHTTP(w, r)
 	}
 }
