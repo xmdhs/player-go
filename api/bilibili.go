@@ -16,6 +16,7 @@ func bilivideoGet(t *http.Transport) httprouter.Handle {
 		Timeout:   10 * time.Second,
 	}
 	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		qn := r.FormValue("qn")
 		if qn == "" {
 			qn = "120"
