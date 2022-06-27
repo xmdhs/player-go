@@ -39,7 +39,7 @@ jobs:
         wails build -trimpath -ldflags="-w -s" -o player-windows.exe -platform windows/amd64 -upx	
 
     - name: Test
-      run: go test -race -v ./...
+      run: go test -tags browser -race -v ./...
 
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2
