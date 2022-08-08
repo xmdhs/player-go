@@ -6,7 +6,7 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/mattn/go-ieproxy v0.0.7
 	github.com/pkg/browser v0.0.0-20210706143420-7d21f8c997e2
-	github.com/wailsapp/wails/v2 v2.0.0-beta.42
+	github.com/wailsapp/wails/v2 v2.0.0-beta.43
 	go.etcd.io/bbolt v1.3.6
 )
 
