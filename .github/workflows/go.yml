@@ -24,8 +24,9 @@ jobs:
       run: |
         git clone https://github.com/xmdhs/player
         cd player
-        npm install
-        npm run build
+        npm install -g pnpm
+        pnpm install
+        pnpm run build
         mkdir ../frontend
         cp -r dist/ ../frontend/
 
