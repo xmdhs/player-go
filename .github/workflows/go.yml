@@ -30,8 +30,8 @@ jobs:
         mkdir ../frontend
         cp -r dist/ ../frontend/
 
-    - name: Get Wails dependencies
-      run: sudo apt update && sudo apt install -y libgtk-3-dev libwebkit2gtk-4.0-dev
+    #- name: Get Wails dependencies
+    #  run: sudo apt update && sudo apt install -y libgtk-3-dev libwebkit2gtk-4.0-dev
 
     - name: Build
       run: |
@@ -39,7 +39,6 @@ jobs:
         go build -trimpath -ldflags="-w -s" -o build/bin/player-linux-browser -tags=browser	
         CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -trimpath -ldflags="-w -s" -o build/bin/player-windows-browser.exe -tags=browser	
         wails build -trimpath -ldflags="-w -s" -o player-windows.exe -platform windows/amd64 -upx	
-        wails build -trimpath -ldflags="-w -s" -o player-linux -platform linux/amd64 -upx	
 
     - name: Test
       run: go test -tags browser -race -v ./...
