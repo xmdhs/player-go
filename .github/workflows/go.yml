@@ -24,7 +24,7 @@ jobs:
       run: |
         git clone https://github.com/xmdhs/player
         cd player
-        git reset --hard 8ac745de09725f6c669c7490dd26e2f667c32138
+        git reset --hard 8688cf11d87fbbe67167d0d12b4ada5c88e98c5b
         npm install -g pnpm
         pnpm install
         pnpm run build
